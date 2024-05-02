@@ -46,7 +46,7 @@ class WebSearcher:
                 content = self.get_clean_text_from_url(url)
                 if content:
                     content = content[:3500]
-                    ARTICLES += f"""<ARTICLE [{article_idx}]>\n{content}\n<\ARTICLE [{article_idx}]>\n\n"""
+                    ARTICLES += f"""<ARTICLE {article_idx}>\n{content}\n<\ARTICLE {article_idx}>\n\n"""
                     article_idx += 1
                     local_article_idx += 1
                     if local_article_idx == 3:
@@ -54,6 +54,9 @@ class WebSearcher:
                     
             if article_idx > 6:
                 break
+
+        # Remove exiting [citation] marks from scraped articles
+        ARTICLES = re.sub(r'\[\d+\]', '', ARTICLES)
 
         return ARTICLES
 

@@ -48,8 +48,8 @@ def main():
         # Fetch model response
         query_response = llm_engine.forward(
                                 llm_engine.apply_chat_template(
-                                    RESPONSE_FORMATION_SYSTEM_PROMPT,
-                                    USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query, ARTICLES = search_articles_formed),
+                                    RESPONSE_FORMATION_SYSTEM_PROMPT.format(ARTICLES = search_articles_formed),
+                                    USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query),
                                     return_pt = True,
                                 ).to(llm_engine.model.device)
                             )
