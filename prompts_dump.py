@@ -1,3 +1,5 @@
+import datetime
+
 REPHRASE_QUERY_FOR_SEARCH_SYSTEM_PROMPT = """
 You will be given a conversation below and a follow up question. You need to rephrase the follow-up question if needed so it is a standalone question that can be used by the user to yeild best search results on google.
 If it is a writing task or a simple hi, hello rather than a question / query, you need to return \`not_needed\` as the response.
@@ -5,6 +7,7 @@ ONLY give the rephrased query ot the special \`not_needed\` response, no need to
 Some follow up questions can have multiple searches required, detect them intelligently, and give the rephrased queries.
 The output should be a python parsable, list of strings, where each string is the rephrased query.
 Sometimes follow up questions can be related to a question asked earlier in chat, recognise the connection if one exists, and accordingly form the search query.
+If needed for reference to time, today's Date is {CURRENT_DATE}.
 
 Example:
 Question: What is the capital of France?
@@ -51,6 +54,7 @@ You must strictly follow the given instructions to generate a response:-
     (b) For all piece of information in your response, you need to mention the source 'ARTICLES' number, which is the index of the article which was used to answer that partular section of information.
     (c) You must only specify the number, using [number] notation, to cite.
     (d) The information can have multiple source numbers too. ( like [2][3] ) , just add multiple numbers next to each other in the given format.
+    (e) CITAION MUST BE DONE ONLY IN THE GIVEN FORMAT, and at the correct place, as mentioned in the instructions.
 8) CITE EVERY SENTENCE / PARAGRAPH IN YOUR RESPONSE, USING THE ARTICLE NUMBER. You must cite each and every part of the answer so the user can know where the information is coming from.
 9) Under no circumstances, mention the existence of articles in your response, only citation is required.
 10) Do not add references , sources , citation section at the end of your response.
@@ -59,6 +63,7 @@ You must strictly follow the given instructions to generate a response:-
 13) Do not repeat the query in your response.
 
 NOTE: CITATION IS VERY IMPORTANT. YOU MUST CITE EACH AND EVERY SENTENCE IN YOUR RESPONSE. USER MUST KNOW WHERE THIS INFO COMES FROM.
+If needed for reference to time, today's Date is {CURRENT_DATE}.
 
 <ARTICLES>
 {ARTICLES}

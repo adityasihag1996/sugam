@@ -37,6 +37,12 @@ class WebSearcher:
         ARTICLES = ""
         article_idx = 1
 
+        max_local_articles = 6
+        if len(SEARCH_QUERIES) == 2:
+            max_local_articles = 3
+        elif len(SEARCH_QUERIES) == 3:
+            max_local_articles = 2
+
         for qry in SEARCH_QUERIES:
             local_article_idx = 0
             results = self.google_search(qry, gs_api_key, gs_cse_id, num_results = 10)
@@ -49,7 +55,7 @@ class WebSearcher:
                     ARTICLES += f"""<ARTICLE {article_idx}>\n{content}\n<\ARTICLE {article_idx}>\n\n"""
                     article_idx += 1
                     local_article_idx += 1
-                    if local_article_idx == 3:
+                    if local_article_idx == max_local_articles:
                         break
                     
             if article_idx > 6:
