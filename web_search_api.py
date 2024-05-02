@@ -37,6 +37,8 @@ class WebSearcher:
         ARTICLES = ""
         article_idx = 1
 
+        SEARCH_QUERIES = [s for s in SEARCH_QUERIES if s != "not_needed"]
+
         max_local_articles = 6
         if len(SEARCH_QUERIES) == 2:
             max_local_articles = 3
