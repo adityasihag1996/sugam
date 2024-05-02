@@ -1,0 +1,7 @@
+accelerate==0.25.0
+bitsandbytes==0.42.0
+transformers==4.38.2
+flash-attn==2.5.5
+beautifulsoup4==4.12.3
+google-api-python-client==2.127.0
+python-dotenv==1.0.1
