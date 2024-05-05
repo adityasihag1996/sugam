@@ -48,7 +48,7 @@ def main():
             continue
         
         # Web search, form articles
-        search_articles_formed = web_search.form_articles(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
+        search_articles_formed, idx_url_mapping = web_search.form_articles_mp(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
         
         # Fetch model response
         query_response = llm_engine.forward(
@@ -63,6 +63,10 @@ def main():
         print("Sugama: ")
         print(query_response)
         print("\n\n")
+
+        # Add 'Sources' to the response
+        for idx, url in idx_url_mapping.items():
+            print(f"[{idx}] - {url}\n")
 
         # Update chat history
         chat_history.append(CHAT_TEMPLATE.format(
