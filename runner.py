@@ -45,29 +45,38 @@ def main():
             continue
         
         # Web search, form articles
-        search_articles_formed = web_search.form_articles(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
+        search_articles_formed, idx_url_mapping = web_search.form_articles_mp(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
         
         # Fetch model response
-        query_response = llm_engine.forward(
+        query_response_stream = llm_engine.forward(
                                 RESPONSE_FORMATION_SYSTEM_PROMPT.format(ARTICLES = search_articles_formed, CURRENT_DATE = datetime.date.today().strftime('%B %-d, %Y')),
                                 USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query),
+                                stream = True,
                             )
-        
-        # Show model response to query
-        print("Sugama: ")
-        print(query_response)
-        print("\n\n")
-
-        # Update chat history
-        chat_history.append(CHAT_TEMPLATE.format(
-                                USER_QUERY = user_query,
-                                ASSISTANT_RESPONSE = query_response,
-                            ))
         
         # Chat history to only store, last 2 QUERY:RESPONSE pairs
         if len(chat_history) > 2:
             chat_history = chat_history[1:]
 
+        # Show model response to query
+        print("Sugama: ")
+        streamed_response_list = []
+        for chunk in query_response_stream:
+            streamed_response_list.append(chunk['message']['content'])
+            print(streamed_response_list[-1], end = '', flush = True)
+        print("\n\n")
+
+        query_response_stream = "".join(streamed_response_list)
+
+        # Update chat history
+        chat_history.append(CHAT_TEMPLATE.format(
+                                USER_QUERY = user_query,
+                                ASSISTANT_RESPONSE = query_response_stream,
+                            ))
+
+        # Add 'Sources' to the response
+        for idx, url in idx_url_mapping.items():
+            print(f"[{idx}] - {url}\n")
 
 
 if __name__ == "__main__":

@@ -11,7 +11,7 @@ class LLM_engine:
     def __init__(self):
         self.model_name = OLLAMA_MODEL
         
-    def forward(self, system_message, user_message):
+    def forward(self, system_message, user_message, stream = False):
         response = ollama.chat(
                         model = self.model_name,
                         messages = [
@@ -30,7 +30,11 @@ class LLM_engine:
                             'top_p': 0.9,
                             'top_k': 40,
                             'num_ctx': 8192,
-                        }
+                        },
+                        stream = stream,
                     )
+        
+        if stream:
+            return response
         
         return response['message']['content']

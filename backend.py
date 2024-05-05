@@ -48,12 +48,18 @@ def handle_message():
         
         # Restrict to only 3 phrases max
         rephrased_search_queries = rephrased_search_queries[:3]
+
+        if rephrased_search_queries == 0:
+            return jsonify(error = "No search phrases returned by LLM rephrasing tool."), 500
     except Exception as e:
         return jsonify(error = "An error occurred while processing your message."), 500
     
     # Web search, form articles
-    search_articles_formed = web_search.form_articles(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
-    
+    try:
+        search_articles_formed, idx_url_mapping = web_search.form_articles_mp(rephrased_search_queries, GS_API_KEY, GS_CSE_ID)
+    except Exception as e:
+        return jsonify(error = "An error occurred while web search and articles formation."), 500
+
     # Fetch model response
     try:
         query_response = llm_engine.forward(
@@ -72,6 +78,11 @@ def handle_message():
     # Chat history to only store, last 2 QUERY:RESPONSE pairs
     if len(chat_history) > 2:
         chat_history = chat_history[1:]
+
+    # Add 'Sources' to the response
+    query_response += "\n\n"
+    for idx, url in idx_url_mapping.items():
+        query_response += f"[{idx}] - {url}\n"
 
     return jsonify(reply = query_response)
 
