@@ -53,10 +53,6 @@ def main():
                                 USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query),
                                 stream = True,
                             )
-        
-        # Chat history to only store, last 2 QUERY:RESPONSE pairs
-        if len(chat_history) > 2:
-            chat_history = chat_history[1:]
 
         # Show model response to query
         print("Sugama: ")
@@ -66,6 +62,10 @@ def main():
             print(streamed_response_list[-1], end = '', flush = True)
         print("\n\n")
 
+        # Add 'Sources' to the response
+        for idx, url in idx_url_mapping.items():
+            print(f"[{idx}] - {url}\n")
+
         query_response_stream = "".join(streamed_response_list)
 
         # Update chat history
@@ -73,10 +73,10 @@ def main():
                                 USER_QUERY = user_query,
                                 ASSISTANT_RESPONSE = query_response_stream,
                             ))
-
-        # Add 'Sources' to the response
-        for idx, url in idx_url_mapping.items():
-            print(f"[{idx}] - {url}\n")
+        
+        # Chat history to only store, last 2 QUERY:RESPONSE pairs
+        if len(chat_history) > 2:
+            chat_history = chat_history[1:]
 
 
 if __name__ == "__main__":
