@@ -28,11 +28,8 @@ def main():
 
         # Get rephrased search queries
         rephrased_search_queries = llm_engine.forward(
-                                        llm_engine.apply_chat_template(
-                                            REPHRASE_QUERY_FOR_SEARCH_SYSTEM_PROMPT.format(CHAT_HISTORY = "\n".join(chat_history), CURRENT_DATE = datetime.date.today().strftime('%B %-d, %Y')),
-                                            QUERY_REPHRASE_COMPLETION_PROMPT.format(QUERY = user_query),
-                                            return_pt = True,
-                                        ).to(llm_engine.model.device)
+                                        REPHRASE_QUERY_FOR_SEARCH_SYSTEM_PROMPT.format(CHAT_HISTORY = "\n".join(chat_history), CURRENT_DATE = datetime.date.today().strftime('%B %-d, %Y')),
+                                        QUERY_REPHRASE_COMPLETION_PROMPT.format(QUERY = user_query),
                                     )
         
         try:
@@ -52,11 +49,8 @@ def main():
         
         # Fetch model response
         query_response = llm_engine.forward(
-                                llm_engine.apply_chat_template(
-                                    RESPONSE_FORMATION_SYSTEM_PROMPT.format(ARTICLES = search_articles_formed, CURRENT_DATE = datetime.date.today().strftime('%B %-d, %Y')),
-                                    USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query),
-                                    return_pt = True,
-                                ).to(llm_engine.model.device)
+                                RESPONSE_FORMATION_SYSTEM_PROMPT.format(ARTICLES = search_articles_formed, CURRENT_DATE = datetime.date.today().strftime('%B %-d, %Y')),
+                                USER_QUERY_ANSWER_COMPLETION_PROMPT.format(QUERY = user_query),
                             )
         
         # Show model response to query
