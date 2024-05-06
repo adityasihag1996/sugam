@@ -43,7 +43,7 @@ then go to `localhost:6969`
 ## To-Do
 - [X] Multithread google search
 - [X] Create skeleton frontend
-- [X] Add streaming to terminal mode
+- [X] Add streaming to terminal mode / FE
 - [ ] Smarter chat history management
 
 ## Contributing

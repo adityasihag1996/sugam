@@ -81,7 +81,32 @@
             input.value = '';
             input.disabled = true;
             sendButton.disabled = true;
-            displayMessage(message, 'You');
+            addMessage(message, 'You');
+
+            // Function to start the SSE stream
+            function startStream(reply, container) {
+                const eventSource = new EventSource(`/stream_response`);
+                
+                eventSource.onmessage = function(event) {
+                    container.innerHTML += event.data;
+                };
+
+                eventSource.addEventListener('end', function(event) {
+                    // dataContainer.innerHTML += '<strong>' + event.data + '</strong>'; // Show a strong message that the stream ended
+                    eventSource.close(); // Close the connection since this is the end event
+                    input.disabled = false;
+                    sendButton.disabled = false;
+                });
+
+                eventSource.onerror = function(error) {
+                    console.error('EventSource failed:', error);
+                    eventSource.close();
+                    container.innerHTML += '<br><br>Stream ended due to an error!';
+                    container.classList.add('error-bot');
+                    input.disabled = false;
+                    sendButton.disabled = false;
+                };
+            }
 
             fetch('http://localhost:6969/sugamify', {
                 method: 'POST',
@@ -93,16 +118,21 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) {
-                    displayMessage(data.error, 'Sugam', true);  // Pass true if there is an error
+                    addMessage(data.error, 'Sugam', true);  // Pass true if there is an error
+                    input.disabled = false;
+                    sendButton.disabled = false;
                 } else {
-                    displayMessage(data.reply, 'Sugam');
+                    addMessage("", 'Sugam');
+
+                    var messagesContainer = document.getElementById('messages');
+                    var allMessagesContainer = messagesContainer.getElementsByTagName('div');
+                    var lastMessagesContainer = allMessagesContainer[allMessagesContainer.length - 1];
+                    startStream(data.reply, lastMessagesContainer)
                 }
-                input.disabled = false;
-                sendButton.disabled = false;
             })
             .catch(error => {
                 console.error('Error:', error);
-                displayMessage('Failed to get response due to a network or parsing error.', 'Sugam', true);
+                addMessage('Failed to get response due to a network or parsing error.', 'Sugam', true);
                 input.disabled = false;
                 sendButton.disabled = false;
             });
@@ -114,8 +144,8 @@
                 sendMessage();
             }
         }
-
-        function displayMessage(message, sender, isError = false) {
+        
+        function addMessage(message, sender, isError = false) {
             var messagesContainer = document.getElementById('messages');
             var msgDiv = document.createElement('div');
             msgDiv.classList.add('message');
