@@ -27,14 +27,23 @@ In a standalone terminal, run ollama inference server for your model
 ollama run llama3:8b-instruct-q8_0
 ```
 
-Start the conversation bot
+Start the conversation bot in terminal mode
 ```
 python runner.py
 ```
 
+OR
+
+If you want to start the sample frontend
+```
+python backend.py
+```
+then go to `localhost:6969`
+
 ## To-Do
-- [ ] Multithread google search
-- [ ] Create skeleton frontend
+- [X] Multithread google search
+- [X] Create skeleton frontend
+- [X] Add streaming to terminal mode
 - [ ] Smarter chat history management
 
 ## Contributing
